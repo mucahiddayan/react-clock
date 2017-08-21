@@ -207,7 +207,8 @@ Clock.defaultProps = {
     HH:{
         width:4,
         height:130
-    }
+    },
+    normAt: '12:15'
 }
 
 class Time {
@@ -215,10 +216,10 @@ class Time {
         
     }
     
-    static getPositions(miliseconds){           
+    static getPositions(miliseconds,norm){           
 		var clock = this.miliToUTC(miliseconds),
 		second = ~~clock.msToSc,
-        second_deg = Time.normalize(~~second*6),
+        second_deg = Time.normalize(~~second*6,norm),
         minute = clock.minute,
         minute_deg = minute * 6,
 		hour = clock.hour,
