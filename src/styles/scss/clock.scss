@@ -1,0 +1,74 @@
+@mixin hands($size,$zIndex,$color,$rotate,$origin:top){
+    height:1px;
+    z-index: $zIndex;
+    background-color: $color;
+    transform:rotateZ($rotate);
+    width: 1px;
+    transform-origin: $origin;
+    position:absolute;
+}
+.clock {
+    position: relative;    
+    margin: auto;
+    
+    .skeleton{
+        width: 100%;
+        height:100%;
+        position: relative;
+        .bones{
+            transform: rotate(270deg);
+            /* position: absolute; */
+            .dots{
+                width:10px;
+                height: 2px;
+                background-color:#333;
+                transform-origin:center;
+                top:-2px;
+                left:-4px;
+                // position: absolute;
+                &.indent{
+                }  
+            }   
+        }
+        .hands{
+            transform: rotate(-180deg);
+            position: absolute;
+            width:50%;
+            height : 50%;                    
+            
+            
+            &.init>div{
+                transition:transform 1s;
+            }
+            /* $size,$zIndex,$color,$rotate */
+            .second-hand {
+                @include hands(170px,3,red,0deg);                
+                
+            }
+            .minute-hand {    
+                @include hands(150px,2,green,90deg);                
+            }
+            .hour-hand {    
+                @include hands(130px,1,orange,180deg);      
+            }
+            .alarm-clock{
+                @include hands(200px,4,#dd11dd,270deg);
+                transition:none !important;            
+            } 
+            
+        }
+        .number{
+            position: absolute;
+        }       
+        
+    }
+    
+    
+}
+
+
+
+
+
+
+

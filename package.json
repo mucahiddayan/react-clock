@@ -1,0 +1,25 @@
+{
+  "name": "clock",
+  "version": "0.1.0",
+  "description": "React Clock",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mucahiddayan/react/tree/dayan-exp"
+  },
+  "author":"Mücahid Dayan",
+  "private": true,
+  "dependencies": {
+    "Propeller": "^0.3.2",
+    "jquery": "^3.2.1",
+    "mongodb": "^2.2.31",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "react-scripts": "1.0.10"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}
