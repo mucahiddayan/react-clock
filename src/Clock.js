@@ -78,7 +78,7 @@ export class Clock extends React.Component{
     hands(){
         return (
             <div className="hands init">
-            <div className="second-hand" style={{transform:`rotateZ(${this.state.second.deg}deg) scale(${this.props.BH.width+','+this.props.BH.height})`}}></div>
+            <div className="second-hand" style={{transform:`rotateZ(${this.state.second.deg}deg) scale(${this.props.SH.width+','+this.props.SH.height})`}}></div>
             <div className="minute-hand" style={{transform:`rotateZ(${this.state.minute.deg}deg) scale(${this.props.MH.width+','+this.props.MH.height})`}}></div>
             <div className="hour-hand" style={{transform:`rotateZ(${this.state.hour.deg}deg) scale(${this.props.HH.width+','+this.props.HH.height})`}}></div>
             {this.props.children?/[clock|hand]/i.test(this.props.children.type.name)?this.props.children:'':''}
