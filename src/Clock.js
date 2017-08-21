@@ -30,7 +30,9 @@ const NULL_POSITION = {
     hour : {
         deg: 270,
         val: 0
-    }
+    },
+
+    tfzd : 0
 };
 
 export class Clock extends React.Component{
@@ -41,7 +43,8 @@ export class Clock extends React.Component{
         this.state = NULL_POSITION;
         this.stopped = false;
         this.started = false;
-        this.destroy = this.destroy.bind(this);        
+        this.destroy = this.destroy.bind(this);
+        this.zerodark = this.getZeroDark();  
     }
     
     //LAYOUT
@@ -131,10 +134,24 @@ export class Clock extends React.Component{
         this.started = true;  
         this.stopped = false;
         LO.G('Clock initialized and started');
-        this.destroy();
-        this.timer = window.setInterval(()=>this.setHands(new Date().getTime()+7200000),1000);          
+        this.destroy();        
+        this.timer = window.setInterval(()=>this.setHands(this.getTimeFromZeroDark(new Date())),1000);          
     }
-    
+
+    getTimeFromZeroDark(date){
+        var tfzd = date.getTime() - this.zerodark;       
+        return tfzd;
+    }
+
+    // returns the miliseconds passed since 00:00 today
+    getZeroDark(){
+        var zdt = new Date();
+        zdt.setHours(0);
+        zdt.setMinutes(0);
+        zdt.setSeconds(0);
+        return zdt;
+    }
+
     stop(){
         this.destroy();    
         if(this.stopped){
@@ -155,9 +172,9 @@ export class Clock extends React.Component{
     }
     
     setHands(miliseconds){
-        var norm = this.normAt(this.props.normAt),
+        var norm = this.resetSecondAt(this.props.resetSecondAt),
             clock = Time.getPositions(miliseconds,norm),
-        sec_deg_norm = ((clock.second.pos));       
+            sec_deg_norm = ((clock.second.pos));       
         this.setState({
             second:{
                 deg: clock.second.deg,
@@ -170,11 +187,12 @@ export class Clock extends React.Component{
             hour:{
                 deg: clock.hour.deg + (~~(clock.minute.val/12) * 6),
                 val: clock.hour.val,
-            }
+            },
+            tfzd : clock.second.val,
         });
     }
 
-    normAt(val){
+    resetSecondAt(val){
         var at = /:/.test(val)?val.split(':'):parseInt(val);
         var rt = Array.isArray(at)? (at[0]*3600) + (at[1]*60) : at*3600;
         return rt;
@@ -186,7 +204,7 @@ export class Clock extends React.Component{
     
     render(){
         return (
-            <div className="clock" style={{width:this.props.width,height:this.props.height}}>
+            <div className="clock" style={{width:this.props.width,height:this.props.height}} data-time-from-zero-dark={this.state.tfzd}>
             {this.structure()}
             </div>
         );
@@ -208,7 +226,7 @@ Clock.defaultProps = {
         width:4,
         height:130
     },
-    normAt: '12:15'
+    resetSecondAt: '13:16'
 }
 
 class Time {
@@ -217,32 +235,33 @@ class Time {
     }
     
     static getPositions(miliseconds,norm){           
-		var clock = this.miliToUTC(miliseconds),
-		second = ~~clock.msToSc,
-        second_deg = Time.normalize(~~second*6,norm),
-        minute = clock.minute,
-        minute_deg = minute * 6,
-		hour = clock.hour,
-		hour_deg = hour*30;
-		
+		var clock   = this.miliToUTC(miliseconds),
+		second      = clock.msToSc,
+        second_deg  = Time.normalize(second,norm)*6,
+        minute      = clock.minute,
+        minute_deg  = minute * 6,
+		hour        = clock.hour,
+		hour_deg    = hour*30;
+
         return {
-			second : {
+			second  : {
 				val : second,
                 deg : second_deg,                        
                 pos : ((second_deg+360)%360)/6,                        
 			},
-			minute : {
+			minute  : {
 				val : minute,
                 deg : minute_deg,                              
 			},
-			hour : {
+			hour    : {
 				val : hour,
                 deg : hour_deg,                
 			}
 		};
         
     }
-    
+
+        
     static miliToUTC (miliseconds){
         var minuteS = 1000*60,
         hourS = minuteS * 60,
@@ -265,13 +284,14 @@ class Time {
             hour : hour,
             minute: minute,
             second:second,
-            msToSc: miliseconds/1000,
+            msToSc: ~~(miliseconds/1000),
         };
     }    
     
-    static normalize(angle,norm = 43200){
+    //@sc : second
+    static normalize(sc,norm = 43200){
         //every 12 hours normalize
-        return (angle+norm)%norm;
+        return (sc+norm)%norm;
     }      
     
 }
